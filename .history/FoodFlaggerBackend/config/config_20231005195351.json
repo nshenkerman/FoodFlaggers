@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "swimtenn1",
+    "database": "FoodFlaggers",
+    "host": "172.28.92.72",
+    "dialect": "postgres",
+    "port": 5432
+  },
+  "test": {
+    "username": "postgres",
+    "password": "swimtenn1",
+    "database": "FoodFlaggers",
+    "host": "172.28.92.72",
+    "dialect": "postgres",
+    "port": 5432
+  },
+  "production": {
+    "username": "postgres",
+    "password": "swimtenn1",
+    "database": "FoodFlaggers",
+    "host": "172.28.92.72",
+    "dialect": "postgres",
+    "port": 5432
+  }
+}

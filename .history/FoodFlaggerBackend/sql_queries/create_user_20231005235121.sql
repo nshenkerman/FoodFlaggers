@@ -1,0 +1,6 @@
+CREATE TABLE Users (
+    uid INT PRIMARY KEY,
+    netid VARCHAR(255) UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
