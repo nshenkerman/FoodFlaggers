@@ -1,5 +1,3 @@
-# FoodFlaggers
-
 # FoodFlagger
 
 ## Developer Team
