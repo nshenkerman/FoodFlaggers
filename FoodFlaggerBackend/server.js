@@ -73,6 +73,135 @@ app.post('/api/update_preferences', async (req, res) => {
     }
 });
 
+/*
+TODO: check Viraj's implementation of the preferences API
+
+app.post('/api/update_preferences', async (req, res) => {
+    console.log("POST /api/update_preferences accessed");
+    
+    try {
+        const { uid, food_preference, price_preference, notif_preference } = req.body;
+
+        const foodPreferences = ['No Preference', 'Vegan', 'Vegetarian', 'Gluten Free', 'Vegan and Gluten Free', 'Vegetarian and Gluten Free'];
+        const pricePreferences = ['Free', 'Paid, no food points', 'Paid, food points'];
+        const notifPreferences = ['Often', 'Sometimes', 'Never'];
+
+        if (!foodPreferences.includes(food_preference) || !pricePreferences.includes(price_preference) || !notifPreferences.includes(notif_preference)) {
+            return res.status(400).json({ error: 'Invalid preference value' });
+        }
+
+        // Update the Preferences table for the specified uid in the database
+        const results = await pool.query('UPDATE Preferences SET food_preference = $1, price_preference = $2, notif_preference = $3 WHERE uid = $4 RETURNING *', [food_preference, price_preference, notif_preference, uid]);
+
+        // Check if any row was updated
+        if (results.rowCount === 0) {
+            return res.status(404).json({ error: 'User preferences not found for the given UID' });
+        }
+
+        // Respond with the updated preferences
+        res.json(results.rows[0]);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+*/
+
+/*
+
+Review Viraj's endpoint for updating number of reports (needs some javascript checking, looks relatively fine?)
+
+app.post('/api/event/:event_id/report', async (req, res) => {
+    console.log("POST /api/event/:event_id/report accessed");
+
+    const { event_id } = req.params;
+
+    // Begin a transaction
+    const client = await pool.connect();
+
+    try {
+        // Start the transaction
+        await client.query('BEGIN');
+
+        // Update the numReports for the event
+        const updateEventQuery = 'UPDATE Event SET num_reports = num_reports + 1 WHERE event_id = $1 RETURNING num_reports, host_uid';
+        const eventResult = await client.query(updateEventQuery, [event_id]);
+
+        // If no event was found, rollback and return an error
+        if (eventResult.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ error: 'Event not found' });
+        }
+
+        // Extract the updated numReports and host_uid
+        const { num_reports, host_uid } = eventResult.rows[0];
+
+        // Update the numReports for the host user
+        const updateUserQuery = 'UPDATE Users SET numReports = numReports + 1 WHERE uid = $1';
+        await client.query(updateUserQuery, [host_uid]);
+
+        // Commit the transaction
+        await client.query('COMMIT');
+
+        // Respond with the updated report counts
+        res.json({ event_id: event_id, num_reports: num_reports });
+
+    } catch (err) {
+        // If there's an error, rollback the transaction
+        await client.query('ROLLBACK');
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    } finally {
+        // Release the client back to the pool
+        client.release();
+    }
+});
+*/
+
+/*
+TODO: review Viraj's query for likes API (the functionality of liking and unliking can maybe be integrated into one button or two buttons that call this endpoint)
+
+app.post('/api/event/:event_id/like', async (req, res) => {
+    console.log("POST /api/event/:event_id/like accessed");
+
+    const { event_id } = req.params;
+    const { action } = req.body; // Assuming 'like' or 'unlike' will be sent in the body
+
+    // SQL query strings for incrementing and decrementing likes
+    const likeQuery = 'UPDATE Event SET num_likes = num_likes + 1 WHERE event_id = $1 RETURNING num_likes';
+    const unlikeQuery = 'UPDATE Event SET num_likes = num_likes - 1 WHERE event_id = $1 AND num_likes > 0 RETURNING num_likes';
+
+    try {
+        // Check if the action is valid
+        if (!['like', 'unlike'].includes(action)) {
+            return res.status(400).json({ error: 'Invalid action' });
+        }
+
+        // Choose the query based on the action
+        const query = action === 'like' ? likeQuery : unlikeQuery;
+
+        // Perform the update operation
+        const results = await pool.query(query, [event_id]);
+
+        // Check if any row was updated
+        if (results.rowCount === 0) {
+            return res.status(404).json({ error: 'Event not found or no likes to remove' });
+        }
+
+        // Respond with the updated likes count
+        res.json({ num_likes: results.rows[0].num_likes });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+*/
+
+
 
 //API endpoint to post an event
 app.post('/api/post_event', async (req, res) => {
