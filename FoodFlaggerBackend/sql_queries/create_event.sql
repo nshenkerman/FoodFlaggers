@@ -9,7 +9,7 @@ CREATE TABLE Event (
     price_type VARCHAR(255),
     num_likes INT DEFAULT 0,
     num_reports INT DEFAULT 0,
-    FOREIGN KEY (host_uid) REFERENCES Users(uid)
+    FOREIGN KEY (host_uid) REFERENCES Users(uid),
     CHECK (food_type IN ('Limited Menu', 'Vegan', 'Vegetarian', 'Gluten Free', 'Vegan and Gluten Free', 'Vegetarian and Gluten Free')),
     CHECK (price_type IN ('Free', 'Paid, no food points', 'Paid, food points'))
 );

@@ -1,8 +1,11 @@
 CREATE TABLE Preferences (
     uid INT,
-    food_preference ENUM('No Preference', 'Vegan', 'Vegetarian', 'Gluten Free', 'Vegan and Gluten Free', 'Vegetarian and Gluten Free'),
-    price_preference ENUM('Free', 'Paid, no food points', 'Paid, food points'),
-    notif_preference ENUM('Often', 'Sometimes', 'Never'),
+    food_preference VARCHAR(255),
+    price_preference VARCHAR(255),
+    notif_preference VARCHAR(255),
     PRIMARY KEY (uid),
-    FOREIGN KEY (uid) REFERENCES Users(uid)
+    FOREIGN KEY (uid) REFERENCES Users(uid),
+    CHECK (food_preference IN ('No Preference', 'Vegan', 'Vegetarian', 'Gluten Free', 'Vegan and Gluten Free', 'Vegetarian and Gluten Free')),
+    CHECK (price_preference IN ('Free', 'Paid, no food points', 'Paid, food points')),
+    CHECK (notif_preference IN ('Often', 'Sometimes', 'Never'))
 );

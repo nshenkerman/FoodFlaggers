@@ -12,4 +12,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER CheckHostBeforeInsert
 BEFORE INSERT ON Event
 FOR EACH ROW
-EXECUTE FUNCTION check_host_before_insert();
+EXECUTE FUNCTION check_banned_before_insert();
