@@ -1,8 +1,11 @@
 // HomePage component
+import Head from "next/head";
+import Event from "./Event";
+import Header from "./Header";
 const HomePage = ({ signOut }) => (
     <div>
-        {/* Home page content */}
-        <button onClick={signOut}>Sign Out</button>
+        <Header />
+        <Event /> 
     </div>
     );
 export default HomePage

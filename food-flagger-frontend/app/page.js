@@ -1,23 +1,27 @@
+// Home.js
 'use client'
 
-import { useState } from 'react';
-import HomePage  from '@/components/HomePage';
+import React, { createContext, useState, useContext } from 'react';
+import HomePage from '@/components/HomePage';
 import SignInPage from '@/components/SignInPage';
+import Event from '@/components/Event';
+import Header from '@/components/Header';
+import { AuthProvider } from './AuthContext';
+import { useAuth } from './AuthContext';
+
 const Home = () => {
-  const [isSignedIn, setIsSignedIn] = useState(false);
 
-  const signIn = (userData) => {
-    // Perform sign in logic (e.g., setting a token, fetching user data, etc.)
-    setIsSignedIn(true);
-  };
+  const { isSignedIn, signIn, signOut } = useAuth();
 
-
-
+  //login function
+  
 
   return (
-    <div>
-      {isSignedIn ? <HomePage signOut={signOut} /> : <SignInPage signIn={signIn} />}
-    </div>
+    
+      <div>
+        {isSignedIn ? <HomePage signOut={signOut} /> : <SignInPage signIn={signIn} />}
+      </div>
+
   );
 };
 

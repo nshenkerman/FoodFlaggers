@@ -1,62 +1,29 @@
 const app = require('./server');
 const db = require('./db');
+const pool = require('./db'); // Your configured PostgreSQL connection pool
+const cors = require('cors');
+app.use(cors()); // Using the CORS middleware
 
-// Example route to get data from the database
-app.get('/api/data', async (req, res) => {
+app.post('/api/login', async (req, res) => {
+  console.log("POST /api/login accessed");
+
   try {
-    const result = await db.query('SELECT * FROM Events');
-    res.json(result.rows);
+    // Extract the values from the request body
+    const { email, netid, password } = req.body;
+    console.log(email, netid, password)
+    // Find the user in the database
+    const query = 'SELECT EXISTS (SELECT 1 FROM Users WHERE email= $1 AND netid = $2 AND password = $3)';
+    const results = await pool.query(query, [email, netid, password]);
+
+    // Check if user was found
+    const userExists = results.rows[0].exists;
+
+    // Respond with whether the user exists
+    res.json({ exists: userExists });
+
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
-  }
-});
-
-
-
-// req = {
-//     method: 'POST',
-//     url: '/api/post_event',
-//     headers: {
-//       'host': 'yourapi.com',
-//       'content-type': 'application/json',
-//     },
-//     body: {
-//         event_id: "189734",
-//         host_uid: "23",
-//         title: "Club meeting 40", 
-//         description: "More free food", 
-//         start_time: null, end_time: null, 
-//         food_type: "vegetarian", 
-//         price_type: "free", 
-//         num_upvotes: "0", 
-//         num_downvotes:"0"
-//     },
-//   }
-
-
-//update preferences API 
-app.post('/api/update_preferences', async (req, res) => {
-  console.log("POST /api/update_preferences accessed");
-  
-  try {
-      // Extract the values from the request body
-      const { uid, food_preference, price_preference } = req.body;
-
-      // Update the Preferences table for the specified uid in the database
-      const results = await pool.query('UPDATE Preferences SET food_preference = $1, price_preference = $2 WHERE uid = $3 RETURNING *', [food_preference, price_preference, uid]);
-
-      // Check if any row was updated
-      if (results.rowCount === 0) {
-          return res.status(404).json({ error: 'User preferences not found for the given UID' });
-      }
-
-      // Respond with the updated preferences
-      res.json(results.rows[0]);
-
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
