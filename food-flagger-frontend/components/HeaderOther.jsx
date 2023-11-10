@@ -1,10 +1,8 @@
 // Header.js
 import Link from 'next/link';
-// import { useAuth } from '@/app/AuthContext';
-const Header = ({useAuth}) => {
-  const { signOut } = useAuth();
+const HeaderOther = () => {
   return (
-    <header className="bg-white shadow-md border-8 border-indigo-500">
+    <header className="bg-white shadow-md border-8 border-indigo-500 ">
       <nav className="container mx-auto px-6 py-3 flex justify-between items-center">
         <Link href="/">
           <div className="text-gray-800 text-3xl font-bold hover:text-indigo-500">Food Flaggers</div>
@@ -19,13 +17,10 @@ const Header = ({useAuth}) => {
           <Link href="/leaderboard">
             <div className="text-gray-600 hover:text-indigo-500 transition duration-300">Leaderboard</div>
           </Link>
-          <button onClick={signOut}>
-            <div className="text-gray-600 hover:text-indigo-500 transition duration-300">Sign Out</div>
-          </button>
         </div>
       </nav>
     </header>
   );
 };
 
-export default Header;
+export default HeaderOther;

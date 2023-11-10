@@ -1,19 +1,49 @@
 import React from 'react';
+import { useState } from 'react';
 
-const Event = () => {
-  const eventData = {
-    event_id: 1,
-    host_uid: 123,
-    title: 'Sample Event',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel nisi nec dui venenatis lacinia.',
-    start_time: '2023-11-09T12:00:00',
-    end_time: '2023-11-09T14:00:00',
-    food_type: 'Vegetarian',
-    price_type: 'Free',
-    num_likes: 10,
-    num_reports: 2,
-  };
-
+const Event = ({ eventData }) => {
+    const [likes, setLikes] = useState(eventData.num_likes);
+    const [reports, setReports] = useState(eventData.num_reports);
+  
+    const handleLike = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/upvote_event', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ event_id: eventData.event_id }),
+        });
+        if (response.ok) {
+          // Increment likes if the update was successful
+          setLikes(likes + 1);
+        } else {
+          throw new Error('Failed to update likes');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    const handleReport = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/report_event', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ event_id: eventData.event_id }),
+        });
+        if (response.ok) {
+          // Increment reports if the update was successful
+          setReports(reports + 1);
+        } else {
+          throw new Error('Failed to update reports');
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
   return (
     <div className="bg-white shadow-md rounded-lg p-4 w-full">
       <h2 className="text-2xl font-semibold">{eventData.title}</h2>
@@ -26,12 +56,12 @@ const Event = () => {
           <p className="text-gray-700">Price Type: {eventData.price_type}</p>
         </div>
         <div className="flex space-x-2">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-            Like ({eventData.num_likes})
-          </button>
-          <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
-            Report ({eventData.num_reports})
-          </button>
+            <button onClick={handleLike} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+                Like ({likes})
+            </button>
+            <button onClick={handleReport} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
+                Report ({reports})
+            </button>
         </div>
       </div>
     </div>
