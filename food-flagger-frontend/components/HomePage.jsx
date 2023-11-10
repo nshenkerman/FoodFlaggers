@@ -7,17 +7,25 @@ import { useAuth } from "@/app/AuthContext";
 const HomePage = () => {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [netID, setNetID] = useState(""); // New state for NetID
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { isSignedIn, userNetID, signIn, signOut } = useAuth();
 
-  const fetchEvents = useCallback(async (searchValue = "") => {
+  const fetchEvents = useCallback(async () => {
     setLoading(true);
     setError(null);
+    console.log(netID)
     try {
-      let url = `http://localhost:3000/api/events?netid=${encodeURIComponent(userNetID)}`;
-      if (searchValue.length > 0) {
-        url += `&search_input=${encodeURIComponent(searchValue)}`;
+      let url = `http://localhost:3000/api/events`;
+      const params = [];
+      if (netID) {
+        params.push(`netid=${encodeURIComponent(netID)}`);
+      }
+      if (searchTerm) {
+        params.push(`searchTerm=${encodeURIComponent(searchTerm)}`);
+      }
+      if (params.length) {
+        url += `?${params.join('&')}`;
       }
       const response = await fetch(url);
       if (!response.ok) {
@@ -30,7 +38,8 @@ const HomePage = () => {
     } finally {
       setLoading(false);
     }
-  }, [userNetID]);
+  }, [netID, searchTerm]); // Add searchTerm as a dependency
+  
 
   useEffect(() => {
     fetchEvents();
@@ -58,6 +67,7 @@ const HomePage = () => {
             placeholder="Search events"
             className="text-gray-700 py-2 px-4 rounded-l"
           />
+          
           <button
             type="submit"
             className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-r"
@@ -65,7 +75,16 @@ const HomePage = () => {
           >
             Search
           </button>
+
+          
         </form>
+        <input
+        type="text"
+        value={netID}
+        onChange={(e) => setNetID(e.target.value)}
+        placeholder="Enter NetID"
+        className="text-gray-700 py-2 px-4 rounded"
+      />
         <button 
           onClick={handleRefresh} 
           className="mb-4 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"

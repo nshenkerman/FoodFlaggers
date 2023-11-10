@@ -3,10 +3,9 @@
 import HeaderOther from "@/components/HeaderOther";
 
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 
 const Home = () => {
-    const router = useRouter();
+
 
     const [formData, setFormData] = useState({
         netid: '',
@@ -42,12 +41,16 @@ const Home = () => {
             }
             const result = await response.json();
             console.log('Event Created:', result);
-            // Handle success, maybe clear form or redirect user
+            
+            // If the post is successful, redirect to the home page
+            window.location.href = '/';
         } catch (err) {
             console.error('Failed to create event:', err);
-            // Handle errors, maybe show user an error message
+            // Here, you can handle errors, for example by setting an error state and displaying a message to the user
+            // setError(err.message); // Uncomment and use if you have an error state set up
         }
     };
+    
 
     return (
         <div>

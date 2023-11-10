@@ -30,15 +30,33 @@ app.post('/api/login', async (req, res) => {
 
 
 // API endpoint to get all events with an order by votes
+
 app.get('/api/events', async (req, res) => {
   try {
-    const results = await db.query('SELECT * FROM Events ORDER BY num_likes DESC');
+    let query = 'SELECT * FROM Events ORDER BY num_likes DESC';
+    const netid = req.query.netid;
+    const searchTerm = req.query.searchTerm;
+
+    if (netid) {
+      query = 
+        'SELECT E.* FROM Events E JOIN Preferences P ON E.food_type = P.food_preference  JOIN Users U ON P.uid = U.uid WHERE (E.price_type = P.price_preference) AND U.netid = $1 ORDER BY E.num_likes DESC';
+    }else if (searchTerm) {
+      query = 'SELECT * FROM Events WHERE title LIKE $1 OR description LIKE $1 ORDER BY num_likes DESC';
+    }
+
+    const queryParams = netid ? [netid] : searchTerm ? [`%${searchTerm}%`] : [];
+    const results = await db.query(query, queryParams);
+    console.log(results)
     res.json(results.rows);
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');
   }
 });
+
+  
+
+
 
 // API endpoint to post an event
 app.post('/api/post_event', async (req, res) => {
