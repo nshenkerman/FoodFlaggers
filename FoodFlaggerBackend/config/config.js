@@ -2,7 +2,7 @@ const dbConfig = {
   user: 'postgres',
   host: 'localhost',
   database: 'FoodFlaggers',
-  password: 'student',
+  password: 'swimtenn1',
   port: 5432, // default port for PostgreSQL
 };
 

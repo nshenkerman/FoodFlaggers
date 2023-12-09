@@ -120,7 +120,7 @@ app.post('/api/report_event', async (req, res) => {
 });
 
 
-// Include necessary imports, like your database connection
+// Include necessary imports, like database connection
 
 app.put('/api/update_preferences', async (req, res) => {
   try {
