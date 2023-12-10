@@ -1,6 +1,8 @@
 import json
+import re
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 # URL and endpoint
 import requests
 
@@ -63,12 +65,21 @@ def extract_event_details(events_data):
         title = event.get('p3')  # Assuming 'p3' holds the event title
         location = event.get('p6')  # Assuming 'p6' holds the location
         description = event.get('p30')  # Assuming 'p30' holds the description
-        date = event.get('p4')
-        tags_html = event.get('p22', '')  # Assuming 'p22' holds the tags in HTML
+        date_html = event.get('p4', '')
 
         # Parse HTML to extract tags
+        tags_html = event.get('p22', '')  # Assuming 'p22' holds the tags in HTML
         soup = BeautifulSoup(tags_html, 'html.parser')
         tags_text = soup.get_text().lower()
+
+        # Parsing the date HTML content
+        if date_html:
+            soup = BeautifulSoup(date_html, 'html.parser')
+            date_text = soup.get_text()
+            # Optional: Use dateutil.parser to parse the date_text into a datetime object
+            # date = dateutil.parser.parse(date_text)
+        else:
+            date_text = ''
 
         # Check if tags contain 'Food' or 'Free Food'
         if 'food' in tags_text or 'free food' in tags_text:
@@ -77,7 +88,7 @@ def extract_event_details(events_data):
                 'location': location,
                 'tags': tags_text,
                 'description': description,
-                'date': date
+                'date': date_text  # or 'date': date if using dateutil
             })
     return extracted_data
 
@@ -94,4 +105,57 @@ output_filename = '/Users/nathanshenkerman/Desktop/FoodFlaggers/FoodFlaggerBacke
 with open(output_filename, 'w') as outfile:
     json.dump(event_details, outfile)
 
-output_filename  # Return the path of the saved file for the user to download
+
+
+
+
+with open(output_filename, 'r') as file:
+    events_data = json.load(file)
+
+# Current date
+current_date = datetime.now()
+
+# Custom function to parse the date and time correctly
+def custom_parse_date_and_time(date_str):
+    match = re.match(r"(.*\d{4})(\d{1,2}.*M.*)", date_str)
+    if match:
+        date_part, time_part = match.groups()
+    else:
+        return None, None
+
+    try:
+        event_date = datetime.strptime(date_part.strip(), '%a, %b %d, %Y')
+    except ValueError:
+        return None, None
+
+    return event_date, time_part.strip()
+
+
+
+# Function to extract and filter data with custom date parsing
+def extract_and_filter_event_data(event):
+    event_date, time_str = custom_parse_date_and_time(event['date'])
+    if event_date is None:
+        return None
+
+    if not (event_date.date() == current_date.date() or event_date.date() == (current_date + timedelta(days=1)).date()):
+        return None
+
+    tags = event['tags'].split(' ')
+    relevant_tags = [tag for tag in tags if tag in ['free', 'food']]
+
+    description = event['description']
+
+    return {
+        'title': event['title'],
+        'date': event_date.strftime('%a, %b %d, %Y'),
+        'time': time_str,
+        'tags': relevant_tags,
+        'description': description
+    }
+
+# Apply the extraction and filtering to each event in the data
+filtered_extracted_data = [extract_and_filter_event_data(event) for event in events_data]
+filtered_extracted_data = [event for event in filtered_extracted_data if event is not None]
+
+print(filtered_extracted_data[:3])  # Displaying first few entries for verification

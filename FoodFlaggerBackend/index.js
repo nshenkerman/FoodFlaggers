@@ -120,7 +120,7 @@ app.post('/api/report_event', async (req, res) => {
 });
 
 
-// Include necessary imports, like database connection
+// Include necessary imports, like your database connection
 
 app.put('/api/update_preferences', async (req, res) => {
   try {
@@ -203,8 +203,16 @@ app.get('/api/search_event', async (req, res) => {
 app.get('/api/user_leaderboard', async (req, res) => {
   console.log("GET /api/users/leaderboard accessed");
 
+  const curPage = parseInt(req.query.page, 10) || 1;
+  const perPage = parseInt(req.query.perPage, 10) || 10; // Default to 10 if not provided
+
   try {
-    // SQL query to fetch users and their sum of likes from events they've hosted
+    // First, get the total count of users
+    const countQuery = 'SELECT COUNT(DISTINCT uid) FROM Users';
+    const countResult = await pool.query(countQuery);
+    const totalUsers = countResult.rows[0].count;
+
+    // SQL query to fetch users and their sum of likes, with pagination
     const query = `
       SELECT 
         u.uid, 
@@ -215,17 +223,25 @@ app.get('/api/user_leaderboard', async (req, res) => {
       LEFT JOIN Events e ON u.uid = e.host_uid
       GROUP BY u.uid
       ORDER BY total_likes DESC
+      OFFSET ${(curPage - 1) * perPage} ROWS
+      FETCH NEXT ${perPage} ROWS ONLY
     `;
     const results = await pool.query(query);
 
-    // Respond with the sorted user list
-    res.json(results.rows);
+    // Respond with the sorted user list and pagination details
+    res.status(200).json({
+      message: "Fetched user leaderboard",
+      users: results.rows,
+      curPage: curPage, // curPage is now correctly treated as a number
+      maxPage: Math.ceil(totalUsers / perPage)
+    });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // Continue rewriting additional routes...
