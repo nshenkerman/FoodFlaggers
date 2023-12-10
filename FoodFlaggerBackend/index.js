@@ -30,23 +30,31 @@ app.post('/api/login', async (req, res) => {
 
 
 // API endpoint to get all events with an order by votes
-
 app.get('/api/events', async (req, res) => {
   try {
-    let query = 'SELECT * FROM Events ORDER BY num_likes DESC';
     const netid = req.query.netid;
     const searchTerm = req.query.searchTerm;
 
+    let query = 'SELECT * FROM Events ORDER BY num_likes DESC';
+    let queryParams = [];
+
     if (netid) {
-      query = 
-        'SELECT E.* FROM Events E JOIN Preferences P ON E.food_type = P.food_preference  JOIN Users U ON P.uid = U.uid WHERE (E.price_type = P.price_preference) AND U.netid = $1 ORDER BY E.num_likes DESC';
-    }else if (searchTerm) {
+      // Adjusted query to handle "No Preference" correctly
+      query = `
+        SELECT E.*
+        FROM Events E
+        JOIN Preferences P ON (E.food_type = P.food_preference OR P.food_preference = 'No Preference')
+        AND (E.price_type = P.price_preference OR P.price_preference = 'Free')
+        JOIN Users U ON P.uid = U.uid
+        WHERE U.netid = $1
+        ORDER BY E.num_likes DESC`;
+      queryParams = [netid];
+    } else if (searchTerm) {
       query = 'SELECT * FROM Events WHERE title LIKE $1 OR description LIKE $1 ORDER BY num_likes DESC';
+      queryParams = [`%${searchTerm}%`];
     }
 
-    const queryParams = netid ? [netid] : searchTerm ? [`%${searchTerm}%`] : [];
     const results = await db.query(query, queryParams);
-    console.log(results)
     res.json(results.rows);
   } catch (err) {
     console.error(err);
@@ -54,22 +62,19 @@ app.get('/api/events', async (req, res) => {
   }
 });
 
-  
 
 
 
 // API endpoint to post an event
-app.post('/api/post_event', async (req, res) => {
+app.post('/api/post_event/:netid', async (req, res) => {
   try {
+    
     // Extract netid and other event details from the request body
-    const { netid, title, description, start_time, end_time, food_type, price_type } = req.body;
-
+    const { netid } = req.params;
+    const { title, description, start_time, end_time, food_type, price_type } = req.body;
+    const host_uid = await getUidFromNetid(netid);
     // Lookup the host_uid based on the netid provided
-    const userRes = await db.query('SELECT uid FROM Users WHERE netid = $1', [netid]);
-    if (userRes.rows.length === 0) {
-      return res.status(404).send('User not found');
-    }
-    const host_uid = userRes.rows[0].uid;
+    
 
     // Insert the new event into the Event table
     const insertQuery = `
@@ -120,18 +125,15 @@ app.post('/api/report_event', async (req, res) => {
 });
 
 
-// Include necessary imports, like your database connection
+//update preferences
 
-app.put('/api/update_preferences', async (req, res) => {
+app.put('/api/update_preferences/:netid', async (req, res) => {
   try {
-    const { netid, food_preference, price_preference, notif_preference } = req.body;
+    const { netid } = req.params;
+    const {food_preference, price_preference, notif_preference } = req.body;
     
     // You'll need to find the user's uid based on their netid first
-    const userResult = await db.query('SELECT uid FROM Users WHERE netid = $1', [netid]);
-    if (userResult.rows.length === 0) {
-      return res.status(404).send('User not found');
-    }
-    const uid = userResult.rows[0].uid;
+    const uid = await getUidFromNetid(netid);
 
     // Update the Preferences table with the new values for the user
     const updateQuery = `

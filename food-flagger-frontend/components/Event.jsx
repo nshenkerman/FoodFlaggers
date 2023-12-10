@@ -6,6 +6,21 @@ const Event = ({ eventData }) => {
     const [reports, setReports] = useState(eventData.num_reports);
     const { isSignedIn, signIn, signOut , isGuest} = useAuth();
 
+
+    const formatDateForGoogleCalendar = (date) => {
+      // Format the date in 'YYYYMMDDTHHmmssZ' format for Google Calendar
+      return date.toISOString().replace(/-|:|\.\d\d\d/g, '');
+    };
+    
+    const googleCalendarLink = () => {
+      const startTime = formatDateForGoogleCalendar(new Date(eventData.start_time));
+      const endTime = formatDateForGoogleCalendar(new Date(eventData.end_time));
+      const title = encodeURIComponent(eventData.title);
+      const description = encodeURIComponent(eventData.description);
+    
+      return `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startTime}/${endTime}&details=${description}`;
+    };
+    
     const handleLike = async () => {
       try {
         const response = await fetch('http://localhost:3000/api/upvote_event', {
@@ -54,7 +69,10 @@ const Event = ({ eventData }) => {
           <p className="text-gray-700">Start Time: {new Date(eventData.start_time).toLocaleString()}</p>
           <p className="text-gray-700">End Time: {new Date(eventData.end_time).toLocaleString()}</p>
           <p className="text-gray-700">Food Type: {eventData.food_type}</p>
-          <p className="text-gray-700">Price Type: {eventData.price_type}</p>
+          <p className="text-gray-700 mb-2">Price Type: {eventData.price_type}</p>
+          <a href={googleCalendarLink()} target="_blank" rel="noopener noreferrer" className="bg-indigo-300 hover:bg-indigo-500 text-white font-semibold py-2 px-4 my-3 rounded">
+            Add to Google Calendar
+          </a>
         </div>
         {!isGuest && <div className="flex space-x-2">
             <button onClick={handleLike} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
@@ -65,6 +83,7 @@ const Event = ({ eventData }) => {
             </button>
         </div>}
       </div>
+      
     </div>
   );
 };

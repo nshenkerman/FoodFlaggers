@@ -158,4 +158,4 @@ def extract_and_filter_event_data(event):
 filtered_extracted_data = [extract_and_filter_event_data(event) for event in events_data]
 filtered_extracted_data = [event for event in filtered_extracted_data if event is not None]
 
-print(filtered_extracted_data[:3])  # Displaying first few entries for verification
+print(filtered_extracted_data)  # Displaying first few entries for verification

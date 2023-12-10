@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
   // Include the user information in the context value
   return (
-    <AuthContext.Provider value={{ isSignedIn, isGuest, signIn, signOut, signInAsGuest }}>
+    <AuthContext.Provider value={{ isSignedIn, isGuest, signIn, signOut, signInAsGuest, user }}>
       {children}
     </AuthContext.Provider>
   );

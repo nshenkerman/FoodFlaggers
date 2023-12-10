@@ -4,10 +4,9 @@ import Header from "@/components/Header";
 import { useState } from 'react';
 import { useAuth } from "../AuthContext";
 const Home = () => {
-
+    const { isSignedIn, signIn, signOut , user} = useAuth();
 
     const [formData, setFormData] = useState({
-        netid: '',
         title: '',
         description: '',
         start_time: '',
@@ -28,7 +27,7 @@ const Home = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/post_event', {
+            const response = await fetch(`http://localhost:3000/api/post_event/${user.netid}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +48,7 @@ const Home = () => {
             // setError(err.message); // Uncomment and use if you have an error state set up
         }
     };
-    const { isSignedIn, signIn, signOut } = useAuth();
+    
 
     return (
         <div>
@@ -60,10 +59,6 @@ const Home = () => {
                 </div>
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     <form className="space-y-6" onSubmit={handleSubmit}>
-                        <label className="block text-sm font-medium leading-6 text-gray-900">
-                           NetID:
-                            <input className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" type="text" name="netid" value={formData.netid} onChange={handleChange} required />
-                        </label>
                         <label className="block text-sm font-medium leading-6 text-gray-900">
                             Title:
                             <input className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" type="text" name="title" value={formData.title} onChange={handleChange} required />

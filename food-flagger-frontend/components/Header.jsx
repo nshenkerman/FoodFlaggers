@@ -1,13 +1,18 @@
 'use client'
 import Link from 'next/link';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 // import { useAuth } from '@/app/AuthContext';
 const Header = ({useAuth}) => {
-
+  
 
   const { signOut, isGuest,} = useAuth();
   const handleSignIn = (e) => {
     signOut()
+  };
+  const handleNotificationClick = () => {
+    // Handle the notification click event
+    alert('There is one new event');
   };
   return (
     <header className="bg-white shadow-md border-8 border-indigo-500">
@@ -16,6 +21,9 @@ const Header = ({useAuth}) => {
           <div className="text-gray-800 text-3xl font-bold hover:text-indigo-500">Food Flaggers</div>
         </Link>
         <div className="flex items-center space-x-4">
+          <button onClick={handleNotificationClick} className="text-gray-600 hover:text-indigo-500 transition duration-300">
+            <FontAwesomeIcon icon={faBell} /> {/* Bell icon */}
+          </button>
           <Link href="/preferences">
             <div className="text-gray-600 hover:text-indigo-500 transition duration-300">Preferences</div>
           </Link>
