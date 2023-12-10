@@ -1,7 +1,7 @@
 DELIMITER $$
 
 CREATE TRIGGER DeleteReportedEvent
-AFTER UPDATE ON Event
+AFTER UPDATE ON Events
 FOR EACH ROW
 BEGIN
     IF NEW.num_reports >= 5 THEN
