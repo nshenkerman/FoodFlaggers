@@ -1,4 +1,4 @@
-CREATE TABLE Event (
+CREATE TABLE Events (
     event_id INT PRIMARY KEY,
     host_uid INT,
     title VARCHAR(255),
