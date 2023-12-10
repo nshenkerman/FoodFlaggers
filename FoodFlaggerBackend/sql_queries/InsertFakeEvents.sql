@@ -1,4 +1,4 @@
-INSERT INTO Event (event_id, host_uid, title, description, start_time, end_time, food_type, price_type)
+INSERT INTO Events (event_id, host_uid, title, description, start_time, end_time, food_type, price_type)
 VALUES
     (00001, 00076, 'Pizza at the Student Center', 'Join us for pizza at the student center! Event starts at 2023-11-12 04:45:00 and ends at 2023-11-12 09:30:00.', '2023-11-12 04:45:00', '2023-11-12 09:30:00', 'Vegetarian and Gluten Free', 'Free'),
     (00002, 00011, 'Sushi Night at the Campus Center', 'Join us for sushi night at the campus center! Event starts at 2023-11-29 15:45:00 and ends at 2023-11-29 19:15:00.', '2023-11-29 15:45:00', '2023-11-29 19:15:00', 'Limited Menu', 'Paid, no food points'),
