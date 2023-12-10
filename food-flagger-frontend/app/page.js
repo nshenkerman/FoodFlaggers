@@ -11,15 +11,15 @@ import { useAuth } from './AuthContext';
 
 const Home = () => {
 
-  const { isSignedIn, signIn, signOut } = useAuth();
-
-  //login function
+  const { isSignedIn, signInAsGuest, isGuest, signIn, signOut } = useAuth();
   
 
   return (
-    
+      
       <div>
-        {isSignedIn ? <HomePage signOut={signOut} /> : <SignInPage signIn={signIn} />}
+        {isSignedIn || isGuest ? <Header useAuth={useAuth}/> : <div />}
+        
+        {isSignedIn || isGuest ? <HomePage signOut={signOut} /> : <SignInPage signIn={signIn} signInAsGuest={signInAsGuest} />}
       </div>
 
   );

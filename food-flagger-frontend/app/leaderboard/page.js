@@ -1,8 +1,9 @@
 'use client'
-import HeaderOther from "@/components/HeaderOther";
+
 import { useEffect, useState } from "react";
+import { useAuth } from "../AuthContext";
 
-
+import Header from "@/components/Header";
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,10 +28,11 @@ const Home = () => {
 
     fetchLeaderboard();
   }, [currentPage, perPage]); // Dependency on currentPage and perPage
+  const { isSignedIn, signIn, signOut , isGuest} = useAuth();
 
   return (
     <div>
-      <HeaderOther />
+        {isSignedIn || isGuest ? <Header useAuth={useAuth}/> : <div />}
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">User Leaderboard</h1>
         <div className="overflow-x-auto ">

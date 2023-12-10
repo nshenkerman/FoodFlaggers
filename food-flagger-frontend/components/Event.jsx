@@ -1,10 +1,11 @@
 import React from 'react';
 import { useState } from 'react';
-
+import { useAuth } from '@/app/AuthContext';
 const Event = ({ eventData }) => {
     const [likes, setLikes] = useState(eventData.num_likes);
     const [reports, setReports] = useState(eventData.num_reports);
-  
+    const { isSignedIn, signIn, signOut , isGuest} = useAuth();
+
     const handleLike = async () => {
       try {
         const response = await fetch('http://localhost:3000/api/upvote_event', {
@@ -55,14 +56,14 @@ const Event = ({ eventData }) => {
           <p className="text-gray-700">Food Type: {eventData.food_type}</p>
           <p className="text-gray-700">Price Type: {eventData.price_type}</p>
         </div>
-        <div className="flex space-x-2">
+        {!isGuest && <div className="flex space-x-2">
             <button onClick={handleLike} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
                 Like ({likes})
             </button>
             <button onClick={handleReport} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">
                 Report ({reports})
             </button>
-        </div>
+        </div>}
       </div>
     </div>
   );

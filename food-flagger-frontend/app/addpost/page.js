@@ -1,9 +1,8 @@
 'use client'
 
-import HeaderOther from "@/components/HeaderOther";
-
+import Header from "@/components/Header";
 import { useState } from 'react';
-
+import { useAuth } from "../AuthContext";
 const Home = () => {
 
 
@@ -50,11 +49,11 @@ const Home = () => {
             // setError(err.message); // Uncomment and use if you have an error state set up
         }
     };
-    
+    const { isSignedIn, signIn, signOut } = useAuth();
 
     return (
         <div>
-            <HeaderOther/>
+            {isSignedIn ? <Header useAuth={useAuth}/> : <div />}
             <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8 ">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Post New Event</h2>

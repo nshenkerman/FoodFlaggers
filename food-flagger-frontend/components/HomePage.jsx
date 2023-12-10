@@ -56,7 +56,6 @@ const HomePage = () => {
 
   return (
     <div>
-      <Header useAuth={useAuth}/>
       <div className="container mx-auto my-8">
         <h1 className="text-4xl font-bold mb-8">Events</h1>
         <form onSubmit={handleSearch} className="mb-4">
@@ -65,7 +64,7 @@ const HomePage = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search events"
-            className="text-gray-700 py-2 px-4 rounded-l"
+            className="text-gray-700 py-2 px-4 rounded-l border-2"
           />
           
           <button
@@ -83,7 +82,7 @@ const HomePage = () => {
         value={netID}
         onChange={(e) => setNetID(e.target.value)}
         placeholder="Enter NetID"
-        className="text-gray-700 py-2 px-4 rounded"
+        className="text-gray-700 py-2 px-4 rounded border-2"
       />
         <button 
           onClick={handleRefresh} 

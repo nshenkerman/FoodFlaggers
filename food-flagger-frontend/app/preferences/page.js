@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect} from 'react';
-import HeaderOther from '@/components/HeaderOther';
+import Header from '@/components/Header';
+import { useAuth } from '../AuthContext';
 const Home = () => {
     const [formData, setFormData] = useState({
         netid: '',
@@ -64,10 +65,11 @@ const Home = () => {
             // Handle errors, maybe show user an error message
         }
     };
+    const { isSignedIn, signIn, signOut } = useAuth();
 
     return (
         <div>
-            <HeaderOther/>
+            {isSignedIn ? <Header useAuth={useAuth}/> : <div />}
 
             
 

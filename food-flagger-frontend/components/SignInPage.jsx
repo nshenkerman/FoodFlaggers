@@ -1,5 +1,5 @@
 // SignInPage component
-const SignInPage = ({ signIn }) => {
+const SignInPage = ({ signIn , signInAsGuest}) => {
     // Sign in form submission logic
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -10,7 +10,7 @@ const SignInPage = ({ signIn }) => {
         // Dummy sign-in logic, replace with actual authentication
         signIn(email, netid, password);
     };
-
+    
     return (
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -47,26 +47,22 @@ const SignInPage = ({ signIn }) => {
                     <div>
                         <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
                     </div>
+
+                    <div>
+                        {/* Add a button for guest browsing */}
+                        <button
+                            type="button"
+                            onClick={signInAsGuest}
+                            className="flex w-full justify-center rounded-md border border-transparent bg-gray-300 px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm hover:bg-gray-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
+                        >
+                            Browse as Guest
+                        </button>
+                    </div>
                 </form>
 
 
             </div>
             </div>
-        // <form onSubmit={handleSubmit}>
-        //     <div>
-        //         <label htmlhtmlFor="Email">Email:</label>
-        //         <input type="text" id="email" name="email" required />
-        //     </div>
-        //     <div>
-        //         <label htmlhtmlFor="netid">NetID:</label>
-        //         <input type="text" id="netid" name="netid" required />
-        //     </div>
-        //     <div>
-        //         <label htmlhtmlFor="password">Password:</label>
-        //         <input type="password" id="password" name="password" required />
-        //     </div>
-        //     <button type="submit">Sign In</button>
-        // </form>
     );
 };
 
