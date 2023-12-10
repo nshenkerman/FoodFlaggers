@@ -13,7 +13,7 @@ const Home = () => {
 
   const { isSignedIn, signInAsGuest, isGuest, signIn, signOut } = useAuth();
   
-
+  //if you're signed in as a guest or signed in fully, you get to see the header and main page. 
   return (
       
       <div>

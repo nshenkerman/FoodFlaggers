@@ -1,11 +1,13 @@
 'use client'
-
 import Header from "@/components/Header";
 import { useState } from 'react';
 import { useAuth } from "../AuthContext";
-const Home = () => {
-    const { isSignedIn, signIn, signOut , user} = useAuth();
 
+const Home = () => {
+    // Destructuring methods and states from useAuth hook
+    const { isSignedIn, signIn, signOut, user } = useAuth();
+
+    // State for managing form data
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -14,38 +16,39 @@ const Home = () => {
         food_type: '',
         price_type: ''
     });
-    
 
+    // Function to handle changes in form inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: value // Updating the specific field in the formData object
         }));
     };
 
+    // Function to handle form submission
     const handleSubmit = async (event) => {
-        event.preventDefault();
+        event.preventDefault(); // Preventing default form submission behavior
         try {
+            // Making a POST request to the server to create a new event
             const response = await fetch(`http://localhost:3000/api/post_event/${user.netid}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(formData) // Sending formData as the request body
             });
             if (!response.ok) {
                 throw new Error(`Error: ${response.statusText}`);
             }
             const result = await response.json();
             console.log('Event Created:', result);
-            
-            // If the post is successful, redirect to the home page
+            // Redirecting to the home page on successful event creation
             window.location.href = '/';
         } catch (err) {
             console.error('Failed to create event:', err);
-            // Here, you can handle errors, for example by setting an error state and displaying a message to the user
-            // setError(err.message); // Uncomment and use if you have an error state set up
+            // Error handling logic could be added here
+            // Example: setError(err.message); // Uncomment and use if an error state is set up
         }
     };
     

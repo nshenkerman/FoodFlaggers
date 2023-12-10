@@ -2,33 +2,40 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext";
-
 import Header from "@/components/Header";
-const Home = () => {
-  const [users, setUsers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10); // New state for per page items
-  const [maxPage, setMaxPage] = useState(null);
 
+const Home = () => {
+  // State variables to manage leaderboard data and pagination
+  const [users, setUsers] = useState([]);          // State to store user data
+  const [currentPage, setCurrentPage] = useState(1); // State for current page in pagination
+  const [perPage, setPerPage] = useState(10);      // State for number of items per page
+  const [maxPage, setMaxPage] = useState(null);    // State to store the maximum number of pages
+
+  // useEffect hook to fetch leaderboard data when currentPage or perPage changes
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
+        // Fetching leaderboard data from the API
         const response = await fetch(`http://localhost:3000/api/user_leaderboard?page=${currentPage}&perPage=${perPage}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
+        // Updating state variables with fetched data
         setUsers(data.users);
         setCurrentPage(data.curPage);
         setMaxPage(data.maxPage);
       } catch (err) {
         console.error('Failed to fetch leaderboard:', err);
+        // Error handling logic could be added here
       }
     };
 
     fetchLeaderboard();
-  }, [currentPage, perPage]); // Dependency on currentPage and perPage
-  const { isSignedIn, signIn, signOut , isGuest} = useAuth();
+  }, [currentPage, perPage]); // Dependency array for useEffect
+
+  // Destructuring methods and states from useAuth hook
+  const { isSignedIn, signIn, signOut, isGuest } = useAuth();
 
   return (
     <div>

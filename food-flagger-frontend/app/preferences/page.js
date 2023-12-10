@@ -1,14 +1,27 @@
 'use client'
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { useAuth } from '../AuthContext';
+
 const Home = () => {
-    const { isSignedIn, signIn, signOut, user} = useAuth();
+    // Destructuring methods and properties from the useAuth hook
+    const { isSignedIn, signIn, signOut, user } = useAuth();
+
+    // State for managing form data
     const [formData, setFormData] = useState({
         food_preference: '',
         price_preference: '',
         notif_preference: ''
     });
+
+    // State for storing current user preferences
+    const [currentPreferences, setCurrentPreferences] = useState({
+        food_preference: 'Loading...',
+        price_preference: 'Loading...',
+        notif_preference: 'Loading...'
+    });
+
+    // Function to handle changes in form inputs
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -16,29 +29,28 @@ const Home = () => {
             [name]: value
         }));
     };
-    const [currentPreferences, setCurrentPreferences] = useState({
-        food_preference: 'Loading...',
-        price_preference: 'Loading...',
-        notif_preference: 'Loading...'
-    });
 
+    // Function to fetch user preferences from an API
     const fetchPreferences = async () => {
-            try {
-                const response = await fetch(`http://localhost:3000/api/preferences/${user.netid}`);
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-                const data = await response.json();
-                setCurrentPreferences(data);
-            } catch (err) {
-                console.error('Failed to fetch preferences:', err);
-                // Handle errors, maybe show user an error message
+        try {
+            const response = await fetch(`http://localhost:3000/api/preferences/${user.netid}`);
+            if (!response.ok) {
+                throw new Error(`Error: ${response.statusText}`);
             }
+            const data = await response.json();
+            setCurrentPreferences(data); // Updates state with fetched preferences
+        } catch (err) {
+            console.error('Failed to fetch preferences:', err);
+            // Error handling logic could be added here
+        }
     };
 
+    // Function to refresh the user preferences
     const handleRefresh = () => {
         fetchPreferences();
     };
+
+    // Function to handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -54,10 +66,10 @@ const Home = () => {
             }
             const result = await response.json();
             console.log('Preferences Updated:', result);
-            // Handle success
+            // Handle success, e.g., displaying a success message
         } catch (err) {
             console.error('Failed to update preferences:', err);
-            // Handle errors
+            // Error handling logic could be added here
         }
     };
     

@@ -9,11 +9,12 @@ const inter = Inter({ subsets: ['latin'] })
 
 
 export default function RootLayout({ children }) {
+  //surround children with authprovider so they all get access to user auth status
   return (
     
       <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+        <AuthProvider> 
           {children}
         </AuthProvider>
       </body>
